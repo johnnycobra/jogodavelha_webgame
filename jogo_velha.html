@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jogo da Velha</title>
+    <style>
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 4px;
+            margin: 0 auto;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            font-size: 24px;
+            text-align: center;
+            vertical-align: middle;
+            border: 2px solid #000;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jogo da Velha</h1>
+    <div class="board" id="board">
+        <div class="cell" onclick="makeMove(0, 0)"></div>
+        <div class="cell" onclick="makeMove(0, 1)"></div>
+        <div class="cell" onclick="makeMove(0, 2)"></div>
+        <div class="cell" onclick="makeMove(1, 0)"></div>
+        <div class="cell" onclick="makeMove(1, 1)"></div>
+        <div class="cell" onclick="makeMove(1, 2)"></div>
+        <div class="cell" onclick="makeMove(2, 0)"></div>
+        <div class="cell" onclick="makeMove(2, 1)"></div>
+        <div class="cell" onclick="makeMove(2, 2)"></div>
+    </div>
+    <p id="message"></p>
+
+    <script>
+        const board = document.getElementById('board');
+        const cells = document.querySelectorAll('.cell');
+        const message = document.getElementById('message');
+        let currentPlayer = 'X';
+        let boardState = ['', '', '', '', '', '', '', '', ''];
+        let gameActive = true;
+
+        const winPatterns = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Linhas
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Colunas
+            [0, 4, 8], [2, 4, 6] // Diagonais
+        ];
+
+        function makeMove(row, col) {
+            if (!gameActive || boardState[row * 3 + col] !== '') return;
+
+            boardState[row * 3 + col] = currentPlayer;
+            cells[row * 3 + col].textContent = currentPlayer;
+            cells[row * 3 + col].classList.add(currentPlayer);
+
+            if (checkWin()) {
+                message.textContent = `Jogador ${currentPlayer} venceu!`;
+                gameActive = false;
+            } else if (boardState.every(cell => cell !== '')) {
+                message.textContent = 'Empate!';
+                gameActive = false;
+            } else {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                message.textContent = `É a vez do jogador ${currentPlayer}`;
+            }
+        }
+
+        function checkWin() {
+            return winPatterns.some(pattern => {
+                const [a, b, c] = pattern;
+                return (
+                    boardState[a] !== '' &&
+                    boardState[a] === boardState[b] &&
+                    boardState[a] === boardState[c]
+                );
+            });
+        }
+    </script>
+</body>
+</html>
